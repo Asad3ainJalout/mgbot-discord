@@ -9,9 +9,8 @@
 
 import asyncio
 import discord
-import json
 import logging
-import urllib.request
+import requests
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -27,10 +26,10 @@ exec(open('secret.txt').read())
 async def quran(command,request):
     data = []
     if command == 'info':
-        obj = json.loads(urllib.request.urlopen("http://staging.quran.com:3000/api/v3/chapters/%s" % (request)).read())['chapter']
+        obj = requests.get("http://staging.quran.com:3000/api/v3/chapters/%s" % (request)).json()['chapter']
         data.append(obj['name_arabic'])
         data.append(obj['name_simple'])
-        data.append(json.loads(urllib.request.urlopen("http://staging.quran.com:3000/api/v3/chapters/%s/info" % (request)).read())['chapter_info']['short_text'])
+        data.append(requests.get("http://staging.quran.com:3000/api/v3/chapters/%s/info" % (request)).json()['chapter_info']['short_text'])
         data.append(obj['revelation_order'])
         data.append(obj['revelation_place'])
         data.append(obj['verses_count'])
@@ -40,7 +39,7 @@ async def quran(command,request):
         request = request.split(":")
         sura = int(request[0])
         verse = int(request[1])
-        obj = json.loads(urllib.request.urlopen("http://staging.quran.com:3000/api/v3/chapters/%s/verses?recitation=1&translations=21&language=en&text_type=words" % (sura)).read())['verses'][verse-1]
+        obj = requests.get("http://staging.quran.com:3000/api/v3/chapters/%s/verses?recitation=1&translations=21&language=en&text_type=words" % (sura)).json()['verses'][verse-1]
         data.append(obj['text_madani'])
         data.append(obj['translations'][0]['text'])
         return data
