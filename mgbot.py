@@ -7,11 +7,11 @@
 #
 # Covered by the GNU General Public License
 
-import discord
 import asyncio
+import discord
 import json
-import urllib.request
 import logging
+import urllib.request
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -19,6 +19,9 @@ client = discord.Client()
 
 # Read in the Secret to login
 exec(open('secret.txt').read())
+
+# Code block for the Urban command
+#async def urban(request):
 
 # Code block for the Quran command
 async def quran(command,request):
@@ -35,7 +38,7 @@ async def quran(command,request):
         return data
     elif command == 'verse':
         request = request.split(":")
-        sura = request[0]
+        sura = int(request[0])
         verse = int(request[1])
         obj = json.loads(urllib.request.urlopen("http://staging.quran.com:3000/api/v3/chapters/%s/verses?recitation=1&translations=21&language=en&text_type=words" % (sura)).read())['verses'][verse-1]
         data.append(obj['text_madani'])
@@ -53,6 +56,7 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('C-C-C-C-C-C-CONVO KILLER #WindowsMasterRace'):
         await client.send_message(message.channel,' s/Windows/Linux/')
+        del content
     elif message.content.startswith('$quran'):
         content = message.content.split(" ")
         data = await quran(content[1],content[2])
@@ -62,7 +66,10 @@ async def on_message(message):
             await client.send_message(message.channel,"```%s\n%s```" % (data[0],data[1]))
         else:
             await client.send_message(message.author,"\n_**Main Commands**_\n\t$quran\n_**$quran Commands**_\n\tinfo (surah number)")
+        del content
+        del data
     elif message.content.startswith('$help'):
         await client.send_message(message.author,"```Main Commands\n--------------------\n\t$help\n\t$quran\n\t\tinfo 1\n\t\tverse 1:1```")
+        del content
     
 client.run(token)
