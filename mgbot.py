@@ -42,7 +42,7 @@ async def quran(command,request):
         verse = int(request[1])
         obj = json.loads(urllib.request.urlopen("http://staging.quran.com:3000/api/v3/chapters/%s/verses?recitation=1&translations=21&language=en&text_type=words" % (sura)).read())['verses'][verse-1]
         data.append(obj['text_madani'])
-        data.append(obj['translations'][verse-1]['text'])
+        data.append(obj['translations'][0]['text'])
         return data
 
 @client.event
@@ -60,7 +60,7 @@ async def on_message(message):
         content = message.content.split(" ")
         data = await quran(content[1],content[2])
         if content[1] == 'info':
-            await client.send_message(message.channel,"```%s\t\t\t%s\t\t\tVerses: %s\n%s\t\t\t%s\t\t\tRevelation Order: %s\n\n%s```" % (data[1],data[0],data[3],data[4],data[6],data[5],data[2]))
+            await client.send_message(message.channel,"```%s\t\t\t%s\t\t\tVerses: %s\n%s\t\t\t%s\t\t\tRevelation Order: %s\n\n%s```" % (data[1],data[0],data[5],data[4],data[6],data[3],data[2]))
         elif content[1] == 'verse':
             await client.send_message(message.channel,"```%s\n%s```" % (data[0],data[1]))
         else:
