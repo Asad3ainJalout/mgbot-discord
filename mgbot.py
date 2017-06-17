@@ -56,7 +56,6 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('C-C-C-C-C-C-CONVO KILLER #WindowsMasterRace'):
         await client.send_message(message.channel,' s/Windows/Linux/')
-        del content
     elif message.content.startswith('$quran'):
         content = message.content.split(" ")
         data = await quran(content[1],content[2])
@@ -66,10 +65,7 @@ async def on_message(message):
             await client.send_message(message.channel,"```%s\n%s```" % (data[0],data[1]))
         else:
             await client.send_message(message.author,"\n_**Main Commands**_\n\t$quran\n_**$quran Commands**_\n\tinfo (surah number)")
-        del content
-        del data
     elif message.content.startswith('$help'):
         await client.send_message(message.author,"```Main Commands\n--------------------\n\t$help\n\t$quran\n\t\tinfo 1\n\t\tverse 1:1```")
-        del content
     
 client.run(token)
