@@ -11,6 +11,7 @@ import asyncio
 import discord
 import logging
 import requests
+from lxml import html
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -20,8 +21,13 @@ client = discord.Client()
 exec(open('secret.txt').read())
 
 # Code block for the Urban command
-#async def urban(request):
-
+async def urban(request):
+    page = requests.get("https://www.urbandictionary.com/define.php", params={'term':request})
+    tree = html.fromstring(page.content)
+    data = tree.xpath('//*[@id="content"]/div[1]/div[3]/child::node()')
+    print(data.tostring(et, encoding='utf8', method='xml'))
+    return data
+    
 # Code block for the Quran command
 async def quran(command,request):
     data = []
@@ -55,6 +61,12 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('C-C-C-C-C-C-CONVO KILLER #WindowsMasterRace'):
         await client.send_message(message.channel,' s/Windows/Linux/')
+    if message.author.id == ('207701996910673920'):
+        await client.add_reaction(message,'🍭')
+    if message.content.startswith('$urban'):
+        content = message.content.split(" ")
+        data = await urban(content[1])
+        await client.send_message(message.channel,"```%s```" % (data))
     elif message.content.startswith('$quran'):
         content = message.content.split(" ")
         data = await quran(content[1],content[2])
