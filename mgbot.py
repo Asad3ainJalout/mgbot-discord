@@ -61,7 +61,7 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('C-C-C-C-C-C-CONVO KILLER #WindowsMasterRace'):
         await client.send_message(message.channel,' s/Windows/Linux/')
-    if message.content.startswith("You can't tell MuslimGamer-bot what to do, this is America mam"):
+    if message.content.startswith("You can't tell MuslimGamer-bot what to do, this is America man"):
         await client.send_message(message.channel,'Exactly, I do what I want.')
         await client.send_message(message.channel,'http://shirtminion.com/wp-content/uploads/2015/06/Im-Sorry-I-Thought-This-Was-America-South-Park-1.jpg')
     if message.author.id == ('218150923829116929'):
