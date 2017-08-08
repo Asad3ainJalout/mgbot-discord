@@ -11,10 +11,11 @@ import asyncio
 import argparse
 import discord
 import logging
-from pytimeparse import parse
 import requests
 import sqlite3 as lite
+import time
 from lxml import html
+from pytimeparse import parse
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -30,28 +31,7 @@ exec(open('secret.txt').read())
 con = None
 con = lite.connect('mgbot.db')
 cur = con.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS Cone(userID INT PRIMARYKEY, coneStatus INT, coneStart INT, coneExpire INT, coneReason TEXT, conedTimes INT, coner TEXT)")
-
-# Cone code block
-async def cone_argsparse(string):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('command')
-    parser.add_argument('victims', nargs='+')
-    parser.add_argument('-r', nargs='+')
-    parser.add_argument('-t')
-    return parser.parse_args(string)
-
-async def cone(userID,command,coneStart,coneDuration,coneReason,coner, channel):
-    if command == 'set' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
-        pass
-    if command == 'unset' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
-        pass
-    if command == 'info':
-        if cur.fetchone():
-            await client.send_message(channel, cur.execute("SELECT coneStart, coneExpire, coneReason, conedTimes, coner FROM Cone WHERE userID = '%s'" % userID))
-        else:
-            await client.send_message(channel,'This user has never been coned')
-    return
+cur.execute("CREATE TABLE IF NOT EXISTS Cone(userID TEXT PRIMARYKEY)")
 
 # Help Code dictionary
 help = {
@@ -77,19 +57,12 @@ async def on_message(message):
             await client.send_message(message.author, help.get(splitMessage[1], help['mgbot']))
         #Cone function, we determine what variables are given before calling the cone_argsparse function
         elif command[1:] == 'cone':
-            args = await cone_argsparse(splitMessage[1:])
-            
-            #checking if the variables defined or not
-            try:
-                args.t
-            except:
-                args.t = '2000y'
-            try:
-                args.r
-            except:
-                args.r = 'You have been coned for reasons unknown.'
-            
-            for victim in args.victims:
-                await cone(victim[1:],args.command,message.timestamp,parse(args.t),args.r,message.author.name.id,message.channel)
+            for victim in message.mentions:
+                cur.execute("INSERT INTO Cone (victim)")
+        elif command[1:] == 'uncone':
+            for victem in message.mentions:
+                cur.execute("DELETE FROME Cone WHERE userID = ?", victim)
+    elif cur.execute("SELECT EXISTS(SELECT 1 FROM Cone WHERE userID=? LIMIT 1)", (message.author.id,)):
+        await client.send_message(message.channel, "coned")
 
 client.run(token)
