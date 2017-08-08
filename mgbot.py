@@ -56,10 +56,10 @@ async def on_message(message):
             splitMessage.append('mgbot')
             await client.send_message(message.author, help.get(splitMessage[1], help['mgbot']))
         #Cone function, we determine what variables are given before calling the cone_argsparse function
-        elif command[1:] == 'cone':
+        elif command[1:] == 'cone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
             for victim in message.mentions:
                 cur.execute("INSERT INTO Cone(userID) VALUES(?)", (victim.id,))
-        elif command[1:] == 'uncone':
+        elif command[1:] == 'uncone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
             for victim in message.mentions:
                 cur.execute("DELETE FROM Cone WHERE userID = ?", (victim.id,))
     for victim in cur.execute("SELECT userID FROM Cone WHERE userID = ?", (message.author.id,)):
