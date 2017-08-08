@@ -57,11 +57,21 @@ async def on_message(message):
             await client.send_message(message.author, help.get(splitMessage[1], help['mgbot']))
         #Cone function, we determine what variables are given before calling the cone_argsparse function
         elif command[1:] == 'cone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
-            for victim in message.mentions:
-                cur.execute("INSERT INTO Cone(userID) VALUES(?)", (victim.id,))
+            cur.execute("SELECT EXISTS(SELECT userID FROM Cone WHERE userID=? LIMIT 1)", (message.author.id,))
+            allowed = cur.fetchone()[0]
+            if allowed == 0:
+                for victim in message.mentions:
+                    cur.execute("INSERT INTO Cone(userID) VALUES(?)", (victim.id,))
+            else:
+                await client.send_message(message.channel,"Nice try sucker.")
         elif command[1:] == 'uncone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
-            for victim in message.mentions:
-                cur.execute("DELETE FROM Cone WHERE userID = ?", (victim.id,))
+            cur.execute("SELECT EXISTS(SELECT userID FROM Cone WHERE userID=? LIMIT 1)", (message.author.id,))
+            allowed = cur.fetchone()[0]
+            if allowed == 0:
+                for victim in message.mentions:
+                    cur.execute("DELETE FROM Cone WHERE userID = ?", (victim.id,))
+            else:
+                await client.send_message(message.channel,"Nice try sucker.")
     for victim in cur.execute("SELECT userID FROM Cone WHERE userID = ?", (message.author.id,)):
         await client.add_reaction(message,'💩') # poop
         await client.add_reaction(message,'🇸') # S
