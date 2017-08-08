@@ -31,7 +31,7 @@ exec(open('secret.txt').read())
 con = None
 con = lite.connect('mgbot.db')
 cur = con.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS Cone(userID TEXT PRIMARYKEY)")
+cur.execute("CREATE TABLE IF NOT EXISTS Cone(userID INT PRIMARYKEY)")
 
 # Help Code dictionary
 help = {
@@ -58,11 +58,18 @@ async def on_message(message):
         #Cone function, we determine what variables are given before calling the cone_argsparse function
         elif command[1:] == 'cone':
             for victim in message.mentions:
-                cur.execute("INSERT INTO Cone (victim)")
+                cur.execute("INSERT INTO Cone(userID) VALUES(?)", (victim.id,))
         elif command[1:] == 'uncone':
-            for victem in message.mentions:
-                cur.execute("DELETE FROME Cone WHERE userID = ?", victim)
-    elif cur.execute("SELECT EXISTS(SELECT 1 FROM Cone WHERE userID=? LIMIT 1)", (message.author.id,)):
-        await client.send_message(message.channel, "coned")
+            for victim in message.mentions:
+                cur.execute("DELETE FROM Cone WHERE userID = ?", (victim.id,))
+    for victim in cur.execute("SELECT userID FROM Cone WHERE userID = ?", (message.author.id,)):
+        await client.add_reaction(message,'💩') # poop
+        await client.add_reaction(message,'🇸') # S
+        await client.add_reaction(message,'🇭') # H
+        await client.add_reaction(message,'🇦') # A
+        await client.add_reaction(message,'🇲') # M
+        await client.add_reaction(message,'🇪') # E
+    else:
+        pass
 
 client.run(token)
