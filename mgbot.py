@@ -8,14 +8,9 @@
 # Covered by the GNU General Public License
 
 import asyncio
-import argparse
 import discord
 import logging
-import requests
 import sqlite3 as lite
-import time
-from lxml import html
-from pytimeparse import parse
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -33,12 +28,6 @@ con = lite.connect('mgbot.db')
 cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS Cone(userID INT PRIMARYKEY)")
 
-# Help Code dictionary
-help = {
-    'mgbot' : '**Main**\n   **' + prefix + 'help** prints out this help. Type ' + prefix + 'help <command> to get more information about a specific command.\n   **' + prefix + 'cone** cones or uncones the shamed (only used by shura)',
-    'help' : '**' + prefix + 'help**\nType ' + prefix + 'help <command> for information about a specific command.\nFor example:\n ' + prefix + 'help cone',
-       }
-
 @client.event
 async def on_ready():
     print('Logged in as')
@@ -51,12 +40,8 @@ async def on_message(message):
     if message.content.startswith(prefix):
         splitMessage = message.content.split(" ")
         command = splitMessage[0]
-        #Basic help call, make sure to edit the help dictionary for any new entries.
-        if command[1:] == 'help':
-            splitMessage.append('mgbot')
-            await client.send_message(message.author, help.get(splitMessage[1], help['mgbot']))
         #Cone function, we determine what variables are given before calling the cone_argsparse function
-        elif command[1:] == 'cone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
+        if command[1:] == 'cone' and (message.author.top_role.id == '287369489987928075' or message.author.top_role.id == '193105896010809344' or message.author.top_role.id == '192322577207787523'):
             cur.execute("SELECT EXISTS(SELECT userID FROM Cone WHERE userID=? LIMIT 1)", (message.author.id,))
             allowed = cur.fetchone()[0]
             if allowed == 0:
